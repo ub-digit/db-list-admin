@@ -1,4 +1,3 @@
-
 import { defineStore } from "pinia";
 import NProgress from 'nprogress';
 import _ from 'lodash'; 
@@ -60,10 +59,10 @@ export const useTopicsStore = defineStore({
       }
   },
   actions: {
-    fakeApiCall(data) {
+// ##################### FAKE API CALLS ############# 
+    fakeApiCallNewTopicReject(payload) {
       return new Promise((_, reject) => {
-        setTimeout(
-          () =>
+        setTimeout(() =>
             reject({
               topic: 'Error while saving',
               sub_topics: ['error1', 'error2']
@@ -72,6 +71,20 @@ export const useTopicsStore = defineStore({
         )
       })
     },
+    fakeApiCallNewTopicResolve(payload) {
+      return new Promise((resolve, _) => {
+        setTimeout(() => {
+          payload.id = Date.now();
+          payload.sub_topics.forEach(topic => topic.id = Date.now())
+          this.topics.push(payload)
+          return resolve(payload)
+        },
+          1000
+        )
+      })
+    },
+// #################### END FAKE API CALLS ###########
+
     waitFor(ms) {
       return new Promise((r) => setTimeout(r, ms));
     },    
@@ -100,10 +113,7 @@ export const useTopicsStore = defineStore({
     async newTopic(payload) {
       try {
         NProgress.start();
-        await this.fakeApiCall(payload);
-        //await this.waitFor(3000)
-        //payload.id = parseInt(_.now());
-        //this.topics.push(payload); 
+        await this.fakeApiCallNewTopicResolve(payload);
       } catch (inputErrors) {
         if (inputErrors) {
           console.log('backend errors:',inputErrors);
