@@ -18,6 +18,7 @@ defmodule DbListAdminWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/topics", TopicsController, :index
   end
 
   # Other scopes may use custom stacks.

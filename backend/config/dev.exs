@@ -4,8 +4,9 @@ import Config
 config :db_list_admin, DbListAdmin.Repo,
   username: "postgres",
   password: "postgres",
-  database: "db_list_admin_dev",
+  database: "databases_dev",
   hostname: "localhost",
+  port: "5433",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
