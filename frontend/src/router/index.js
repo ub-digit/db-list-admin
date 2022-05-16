@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import TopicsView from "../views/topic/TopicsView.vue";
-import TopicsViewIndex from "../views/topic/TopicsViewIndex.vue";
-import Topic from "../views/topic/Topic.vue";
-import TopicShow from "../views/topic/TopicsShow.vue";
-import TopicEdit from "../views/topic/TopicEdit.vue";
-import TopicNew from "../views/topic/TopicNew.vue";
+import TopicsList from "../views/topic/List.vue";
+import TopicsListIndex from "../views/topic/ListIndex.vue";
+import TopicShow from "../views/topic/Show.vue";
+import TopicEdit from "../views/topic/Edit.vue";
+import TopicNew from "../views/topic/New.vue";
 import MediatypesView from "../views/mediatype/MediatypesView.vue";
 import MediatypesViewIndex from "../views/mediatype/MediatypesViewIndex.vue";
 import Mediatype from "../views/mediatype/Mediatype.vue";
@@ -143,35 +142,28 @@ const router = createRouter({
     {
       path: '/topics',
       name: 'topics',
-      component: TopicsView,
+      component: TopicsList,
       children: [
         {
           path: '',
           name: 'index',
-          component: TopicsViewIndex,
+          component: TopicsListIndex,
           props: {title: "topic"}
         },
+        { 
+          path: 'new',
+          name: 'TopicNew',
+          component: TopicNew
+        },
         {
-          path: '/topic',
-          name: 'Topic',
-          component: Topic,
-          children: [
-            { 
-              path: 'new',
-              name: 'TopicNew',
-              component: TopicNew
-            },
-            {
-              path: 'show/:id',
-              name: 'TopicShow',
-              component: TopicShow
-            },
-            {
-              path: 'edit/:id',
-              name: 'TopicEdit',
-              component: TopicEdit
-            }
-          ]
+          path: 'show/:id',
+          name: 'TopicShow',
+          component: TopicShow
+        },
+        {
+          path: 'edit/:id',
+          name: 'TopicEdit',
+          component: TopicEdit
         }
       ]
     },
