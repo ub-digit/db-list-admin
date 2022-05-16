@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="row justify-content-end">
     <div class="col-auto m-4">
         <router-link v-if="isNewVisible" class="btn btn-light" :to="{name: 'TopicNew'}">New topic +</router-link>
@@ -20,9 +21,8 @@
     <div v-else>
       No topics created
     </div>
-    
-    
   </div>
+</div>
 </template>
 
 <script>
