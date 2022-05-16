@@ -1,13 +1,11 @@
 <template>
   <div class="ZeroState">
      <h2> <font-awesome-icon :icon="['far', 'edit']"/> Select a {{title}} to edit </h2>
-      
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ZeroState',
   props: ['title']
 }
 </script>
