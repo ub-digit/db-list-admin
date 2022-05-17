@@ -7,10 +7,10 @@ defmodule DbListAdmin.Model.Topic do
     field :name_en, :string
     field :name_sv, :string
     timestamps()
-    #has_many :database_topics, Model.DatabaseTopic
+    has_many :database_topics, Model.DatabaseTopic
   end
 
-  def remap(%{} = topic) do
+  def remap(%Model.Topic{} = topic) do
     %{
       id: topic.id,
       name_en: topic.name_en,
@@ -19,10 +19,28 @@ defmodule DbListAdmin.Model.Topic do
     }
   end
 
+  def remap_error(error) do
+    error_list =
+    error
+    |> IO.inspect(label: "Error")
+    |> Enum.map(fn {k, {_, reason}} ->
+        {r1, r2} = List.first(reason)
+        %{k => Atom.to_string(r1) <> "_" <> Atom.to_string(r2)}
+      end)
+
+    %{
+      error: %{
+        topic: error_list
+      }
+    }
+  end
+
   @doc false
   def changeset(%Model.Topic{} = topic, attrs) do
     topic
     |> cast(attrs, [:name_en, :name_sv])
     |> validate_required([:name_en, :name_sv])
+    |> unique_constraint(:name_en, name: :topics_name_en_key)
+    |> unique_constraint(:name_sv, name: :topics_name_sv_key)
   end
 end

@@ -6,7 +6,7 @@ defmodule DbListAdminWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, {DbListAdminWeb.LayoutView, :root}
-    plug :protect_from_forgery
+    #plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
@@ -19,6 +19,9 @@ defmodule DbListAdminWeb.Router do
 
     get "/", PageController, :index
     get "/topics", TopicsController, :index
+    post "/topics", TopicsController, :create
+    #put "/topics", TopicsController, :create_or_update
+    #delete "/topics", TopicsController, :create_or_update
   end
 
   # Other scopes may use custom stacks.
