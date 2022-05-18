@@ -2,6 +2,7 @@ defmodule DbListAdmin.Model.Topic do
   use Ecto.Schema
   import Ecto.Changeset
   alias DbListAdmin.Model
+  alias DbListAdmin.Repo
 
   schema "topics" do
     field :name_en, :string
@@ -25,7 +26,7 @@ defmodule DbListAdmin.Model.Topic do
     |> IO.inspect(label: "Error")
     |> Enum.map(fn {k, {_, reason}} ->
         {r1, r2} = List.first(reason)
-        %{k => Atom.to_string(r1) <> "_" <> Atom.to_string(r2)}
+        %{:field => k, :error_code => Atom.to_string(r1) <> "_" <> Atom.to_string(r2)}
       end)
 
     %{
@@ -33,6 +34,11 @@ defmodule DbListAdmin.Model.Topic do
         topic: error_list
       }
     }
+  end
+
+  def find(id) when is_nil(id), do: %Model.Topic{}
+  def find(id) do
+    Repo.get!(Model.Topic, id)
   end
 
   @doc false

@@ -2,6 +2,7 @@
 defmodule DbListAdmin.Resource.Topic do
   alias DbListAdmin.Model
   alias DbListAdmin.Repo
+  alias DbListAdmin.Resource.Topic.SubTopic
   import Ecto.Query
 
   def get_topics() do
@@ -11,15 +12,8 @@ defmodule DbListAdmin.Resource.Topic do
       |> topic_can_be_deleted()
   end
 
-  def get_sub_topics do
-    (from sub_topic in Model.SubTopic)
-    |> Repo.all()
-    |> Enum.map(fn item -> Model.SubTopic.remap(item) end)
-    |> sub_topic_can_be_deleted()
-  end
-
   def get_topics_with_sub_topics do
-    sub_topics = get_sub_topics()
+    sub_topics = SubTopic.get_sub_topics()
     |> Enum.group_by(fn item -> item[:topic_id] end)
     get_topics()
     |> Enum.map(fn item -> Map.put(item, :sub_topics, sub_topics[item[:id]]) end)
@@ -36,19 +30,6 @@ defmodule DbListAdmin.Resource.Topic do
     topics
     |> Enum.map(fn topic ->
       Map.put(topic, :can_be_deleted, Enum.member?(connections, topic[:id]) == false)
-    end)
-  end
-
-  def sub_topic_can_be_deleted(sub_topics) do
-    connections = (from database_sub_topics in Model.DatabaseSubTopic,
-    preload: [:sub_topic])
-    |> Repo.all()
-    |> Enum.map(fn item -> Map.get(Map.get(item, :sub_topic), :id) end)
-    |> Enum.uniq()
-
-    sub_topics
-    |> Enum.map(fn sub_topic ->
-      Map.put(sub_topic, :can_be_deleted, Enum.member?(connections, sub_topic[:id]) == false)
     end)
   end
 
