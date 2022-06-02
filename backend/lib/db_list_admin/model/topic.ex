@@ -9,17 +9,25 @@ defmodule DbListAdmin.Model.Topic do
     field :name_sv, :string
     timestamps()
     has_many :database_topics, Model.DatabaseTopic
+    has_many :sub_topics, Model.SubTopic
   end
 
-  def remap(%Model.Topic{} = topic) do
+  def remap(%{} = topic) do
     %{
       id: topic.id,
       name_en: topic.name_en,
       name_sv: topic.name_sv,
-      updated_at: topic.updated_at
+      updated_at: topic.updated_at,
+      sub_topics: Model.SubTopic.remap_all(topic.sub_topics),
+      can_be_deleted: can_be_deleted(topic)
     }
   end
 
+  def can_be_deleted(%{:sub_topics => sub_topics} = topic) when is_list(sub_topics) do
+     length(topic.sub_topics) < 1 and length(topic.database_topics) < 1
+  end
+
+  def can_be_deleted(_), do: false
   def remap_error(error) do
     error_list =
     error
@@ -45,6 +53,7 @@ defmodule DbListAdmin.Model.Topic do
   def changeset(%Model.Topic{} = topic, attrs) do
     topic
     |> cast(attrs, [:name_en, :name_sv])
+    |> assoc_constraint(:sub_topics, name: :sub_topics_fk_topics )
     |> validate_required([:name_en, :name_sv])
     |> unique_constraint(:name_en, name: :topics_name_en_key)
     |> unique_constraint(:name_sv, name: :topics_name_sv_key)

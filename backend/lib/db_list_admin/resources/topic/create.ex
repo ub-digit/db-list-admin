@@ -5,7 +5,7 @@ defmodule DbListAdmin.Resource.Topic.Create do
   alias Ecto.Multi
   alias DbListAdmin.Resource.Topic.SubTopic
 
-  def create(data) do
+  def create_or_update(data) do
     Multi.new()
     |> Multi.run(:topic, fn repo, _ ->
       Model.Topic.changeset(Model.Topic.find(data["id"]), data)
@@ -15,19 +15,10 @@ defmodule DbListAdmin.Resource.Topic.Create do
         {:error, reason} -> {:error, Model.Topic.remap_error(reason.errors)}
       end
     end)
-    |> Multi.run(:sub_topics, fn repo, %{topic: %{id: topic_id}} ->
-      results = Enum.map(data["sub_topics"], fn sub_topic -> SubTopic.Create.create(repo, topic_id, sub_topic) end)
-      |> IO.inspect()
-      results
-      |> Enum.any?(fn result -> elem(result, 0) == :error end)
-      |> case do
-        true -> {:error, results}
-        false -> {:ok, results}
-      end
-    end)
-    |> Multi.run(:rollback, fn repo, seq ->
-      IO.inspect(seq)
-      repo.rollback({:error, :deliberate}) end)
+    |> SubTopic.Create.insert_update_delete_all(data["sub_topics"])
+    #|> Multi.run(:rollback, fn repo, _ ->
+    # repo.rollback({:error, :deliberate})
+    #end)
     |> Repo.transaction()
   end
 end

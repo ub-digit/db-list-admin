@@ -12,6 +12,7 @@ defmodule DbListAdmin.Model.SubTopic do
   end
 
   def remap(%Model.SubTopic{} = sub_topic) do
+
     %{
       id: sub_topic.id,
       topic_id: sub_topic.topic_id,
@@ -19,6 +20,13 @@ defmodule DbListAdmin.Model.SubTopic do
       name_sv: sub_topic.name_sv
     }
   end
+
+  def remap_all(sub_topics) when is_list(sub_topics) do
+    sub_topics
+    |> Enum.map(fn item -> Model.SubTopic.remap(item) end)
+  end
+
+  def remap_all(_), do: []
 
   def remap_error(error) do
     error_list =
@@ -39,6 +47,10 @@ defmodule DbListAdmin.Model.SubTopic do
   def find(id) when is_nil(id), do: %Model.SubTopic{}
   def find(id) do
     Repo.get!(Model.SubTopic, id)
+  end
+
+  def delete(repo, id) do
+    repo.delete(%Model.SubTopic{id: id})
   end
 
   @doc false
